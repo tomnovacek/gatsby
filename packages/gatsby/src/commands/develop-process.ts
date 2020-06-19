@@ -690,7 +690,7 @@ module.exports = async (program: IProgram): Promise<void> => {
       const state = store.getState()
       const mapOfTemplatesToStaticQueryHashes = mapTemplatesToStaticQueryHashes(
         state,
-        stats
+        stats.compilation
       )
 
       mapOfTemplatesToStaticQueryHashes.forEach(
