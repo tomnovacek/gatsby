@@ -33,7 +33,7 @@ export function mapTemplatesToStaticQueryHashes(
     const getDepsFn = (m): any => {
       const hasReasons = m.hasReasons()
       const isTerminalNode = terminalNodes.reduce(
-        (result, terminalNode) => result || m.resource.includes(terminalNode),
+        (result, terminalNode) => result || m?.resource?.includes(terminalNode),
         false
       )
 
@@ -47,21 +47,22 @@ export function mapTemplatesToStaticQueryHashes(
           const dependentModule = r.module
           const isTerminal = terminalNodes.reduce(
             (result, terminalNode) =>
-              result || dependentModule.resource.includes(terminalNode),
+              result || dependentModule?.resource?.includes(terminalNode),
             false
           )
           return !isTerminal
         })
         .map(r => r.module)
+        .filter(Boolean)
 
       const uniqDependents = uniqBy(nonTerminalDependents, (d: any) =>
-        d.identifier()
+        d?.identifier()
       )
 
       for (const x of uniqDependents) {
         result.add(x.resource)
 
-        if (x.resource.includes(`gatsby-browser.js`)) {
+        if (x?.resource?.includes(`gatsby-browser.js`)) {
           globalStaticQueries.add(staticQueryModuleComponentPath)
         }
         getDepsFn(x)
