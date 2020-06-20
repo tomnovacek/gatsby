@@ -1,11 +1,12 @@
-const fs = require(`fs-extra`)
 const { spawn } = require(`child_process`)
 const path = require(`path`)
 const { murmurhash } = require(`babel-plugin-remove-graphql-queries`)
-const { getFilePath } = require(`gatsby/dist/utils/page-data`)
+const { readPageData } = require(`gatsby/dist/utils/page-data`)
 const { stripIgnoredCharacters } = require(`gatsby/graphql`)
 
 jest.setTimeout(100000)
+
+const publicDir = path.join(process.cwd(), `public`)
 
 const gatsbyBin = path.join(`node_modules`, `.bin`, `gatsby`)
 
@@ -39,14 +40,6 @@ const githubQuery = `
   }
 `
 
-async function readPageData(pagePath) {
-  const pathToFile = getFilePath(
-    { publicDir: path.join(process.cwd(), `public`) },
-    pagePath
-  )
-  return fs.readJSON(pathToFile)
-}
-
 function hashQuery(query) {
   const text = stripIgnoredCharacters(query)
   const hash = murmurhash(text, `abc`)
@@ -74,7 +67,7 @@ describe(`Static Queries`, () => {
     const queries = [titleQuery, ...globalQueries]
     const pagePath = `/inline/`
 
-    const { staticQueryHashes } = await readPageData(pagePath)
+    const { staticQueryHashes } = await readPageData(publicDir, pagePath)
 
     expect(staticQueryHashes.sort()).toEqual(queries.map(hashQuery).sort())
   })
@@ -83,7 +76,7 @@ describe(`Static Queries`, () => {
     const queries = [titleQuery, ...globalQueries]
     const pagePath = `/import/`
 
-    const { staticQueryHashes } = await readPageData(pagePath)
+    const { staticQueryHashes } = await readPageData(publicDir, pagePath)
 
     expect(staticQueryHashes.sort()).toEqual(queries.map(hashQuery).sort())
   })
@@ -92,7 +85,7 @@ describe(`Static Queries`, () => {
     const queries = [titleQuery, ...globalQueries]
     const pagePath = `/dynamic/`
 
-    const { staticQueryHashes } = await readPageData(pagePath)
+    const { staticQueryHashes } = await readPageData(publicDir, pagePath)
 
     expect(staticQueryHashes.sort()).toEqual(queries.map(hashQuery).sort())
   })
@@ -101,7 +94,7 @@ describe(`Static Queries`, () => {
     const queries = [titleQuery, ...globalQueries]
     const pagePath = `/jsx/`
 
-    const { staticQueryHashes } = await readPageData(pagePath)
+    const { staticQueryHashes } = await readPageData(publicDir, pagePath)
 
     expect(staticQueryHashes.sort()).toEqual(queries.map(hashQuery).sort())
   })
@@ -110,7 +103,7 @@ describe(`Static Queries`, () => {
     const queries = [titleQuery, ...globalQueries]
     const pagePath = `/tsx/`
 
-    const { staticQueryHashes } = await readPageData(pagePath)
+    const { staticQueryHashes } = await readPageData(publicDir, pagePath)
 
     expect(staticQueryHashes.sort()).toEqual(queries.map(hashQuery).sort())
   })
@@ -119,7 +112,7 @@ describe(`Static Queries`, () => {
     const queries = [titleQuery, ...globalQueries]
     const pagePath = `/typescript/`
 
-    const { staticQueryHashes } = await readPageData(pagePath)
+    const { staticQueryHashes } = await readPageData(publicDir, pagePath)
 
     expect(staticQueryHashes.sort()).toEqual(queries.map(hashQuery).sort())
   })
@@ -128,7 +121,7 @@ describe(`Static Queries`, () => {
     const queries = [titleQuery, authorQuery, ...globalQueries]
     const pagePath = `/import-import/`
 
-    const { staticQueryHashes } = await readPageData(pagePath)
+    const { staticQueryHashes } = await readPageData(publicDir, pagePath)
 
     expect(staticQueryHashes.sort()).toEqual(queries.map(hashQuery).sort())
   })
@@ -137,7 +130,7 @@ describe(`Static Queries`, () => {
     const queries = [titleQuery, ...globalQueries]
     const pagePath = `/dynamic-dynamic/`
 
-    const { staticQueryHashes } = await readPageData(pagePath)
+    const { staticQueryHashes } = await readPageData(publicDir, pagePath)
 
     expect(staticQueryHashes.sort()).toEqual(queries.map(hashQuery).sort())
   })
@@ -146,7 +139,7 @@ describe(`Static Queries`, () => {
     const queries = [titleQuery, authorQuery, ...globalQueries]
     const pagePath = `/import-dynamic/`
 
-    const { staticQueryHashes } = await readPageData(pagePath)
+    const { staticQueryHashes } = await readPageData(publicDir, pagePath)
 
     expect(staticQueryHashes.sort()).toEqual(queries.map(hashQuery).sort())
   })
@@ -155,7 +148,7 @@ describe(`Static Queries`, () => {
     const queries = [titleQuery, ...globalQueries]
     const pagePath = `/dynamic-import/`
 
-    const { staticQueryHashes } = await readPageData(pagePath)
+    const { staticQueryHashes } = await readPageData(publicDir, pagePath)
 
     expect(staticQueryHashes.sort()).toEqual(queries.map(hashQuery).sort())
   })
@@ -164,7 +157,7 @@ describe(`Static Queries`, () => {
   //   const queries = [titleQuery]
   //   const pagePath = `/dynamic-import/`
 
-  //   const { staticQueryHashes } = await readPageData(pagePath)
+  //   const { staticQueryHashes } = await readPageData(publicDir, pagePath)
 
   //   expect(staticQueryHashes.sort()).toEqual(queries.map(hashQuery).sort())
   // })
@@ -173,7 +166,7 @@ describe(`Static Queries`, () => {
   //   const queries = [titleQuery]
   //   const pagePath = `/dynamic-import/`
 
-  //   const { staticQueryHashes } = await readPageData(pagePath)
+  //   const { staticQueryHashes } = await readPageData(publicDir, pagePath)
 
   //   expect(staticQueryHashes.sort()).toEqual(queries.map(hashQuery).sort())
   // })
